@@ -1,0 +1,56 @@
+.TH vtgamma 1 2006-07-10 vtgamma vtgamma
+.SH NAME
+vtgamma \- set gamma correction on text terminals
+.SH SYNOPSIS
+.B vtgamma
+.RI [ -x ] " <gamma>"
+.br
+.B vtgamma
+.RI [ -x ] " <red gamma> <green gamma> <blue gamma>"
+.SH DESCRIPTION
+.B vtgamma
+allows you to set the gamma correction on Linux console.  It also works on
+certain terminal emulators as well.  This is usually useful on aged CRT
+monitors, which tend to rapidly lose the luminance-to-voltage ratio.  Even
+after just 2-3 years, typical CRT often needs gamma of as much as 1.6 to
+resemble a new one.  The author of this words has seen a specimen that needed
+gamma of 4.0 despite still having razor-sharp display.
+
+Gamma correction is given as a positive floating-point number, with 1.0 being
+the default.
+
+.RB "To affect the login prompt, it's best to: " "vtgamma"
+.I 1.6
+.BR ">>/etc/issue" ", where "
+.IR 1.6 " is the gamma correction you want."
+
+The color profile lasts either until the next time a program resets the terminal.
+While this is quite a rare thing, it happens, and thus you'll probably want to
+have the gamma refreshed every time a program exits.  The most effective way to
+do so is to edit your
+.B ~/.bashrc
+and include the output of
+.BI "vtgamma -e " 1.6
+.RB "in " PS1 ", enclosed between " \e[ " and " \e] "."
+.RB "Unfortunately, the " "Midnight Commander" " can't cope well with prompts"
+containing such codes, thus you may want to prefer to set
+.B PROMPT_COMMAND
+instead:
+.br
+.HP
+.I PROMPT_COMMAND='echo -ne "\ee]P0000000..."'
+.HP 0
+This is only a notch slower (as
+.I echo
+is a bash builtin), and it obviously beats running vtgamma every single time.
+.SH OPTIONS
+.TP
+.BR -e | --escape
+Escapes the codes in a form suitable for
+.BR "echo -e" ","
+C/Perl/... literals, etc.
+.SH "SEE ALSO"
+.IR xgamma ( 1 ).
+.SH AUTHOR
+Both the program and this man page are the fault of Adam Borowski.  Both of
+them are in the Public Domain, or the closest approximation allowed by law.

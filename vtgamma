@@ -1,0 +1,61 @@
+#!/usr/bin/perl -w
+use strict;
+
+my $esc="\e";
+my @args=[];
+
+my $USAGE=<<END;
+Usage:
+  vtgamma \e[2m[-e]\e[0m \e[1m<gamma>\e[0m
+  vtgamma \e[2m[-e]\e[0m \e[31;1m<\e[0;31mred gamma\e[1m>\e[0m \e[32;1m<\e[0;32mgreen gamma\e[1m>\e[0m \e[1;34m<\e[0;34mblue gamma\e[1m>\e[0m
+END
+$USAGE=~s/\e\[[0-9;]*m//g unless -t STDERR;
+
+while(@ARGV)
+{
+    $_=shift;
+    if (/^-e|--escape$/)
+    {
+        $esc='\e';
+    }
+    elsif (/^(\d*\.?\d+)$/)
+    {
+        push @args, $1;
+    }
+    else
+    {
+        die "Invalid argument: \"$_\"\n$USAGE";
+    }
+}
+
+my ($r,$g,$b)=
+    ($#args==0)? die "$USAGE":
+    ($#args==1)? ($args[1],$args[1],$args[1]):
+    ($#args==2)? die "Only 2 gammas given, 1 or 3 required.\n":
+    ($#args==3)? ($args[1],$args[2],$args[3]):
+    die "Too many gammas given.\n$USAGE";
+
+sub gamma($$)
+{
+    my ($x,$k)=@_;
+    return 0 if $x<=0;
+    return ($x==255)?255:0 if $k<=0;
+    return 255*exp(log($x/255)/$k);
+}
+
+sub irgb($$)
+{
+    my ($c,$bit)=@_;
+    return ($c&8?0x55:0) + ($c&$bit?0xaa:0);
+}
+
+for(0..15)
+{
+    printf "%s]P%1X%02X%02X%02X",
+          $esc,
+          $_,
+          gamma(irgb($_,1), $r),
+          gamma(irgb($_,2), $g),
+          gamma(irgb($_,4), $b);
+}
+print "\n" if $esc ne "\e";

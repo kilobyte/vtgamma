@@ -1,4 +1,4 @@
-.TH vtgamma 1 2006-07-10 vtgamma vtgamma
+.TH vtgamma 1 2006-07-10 Debian "Linux console"
 .SH NAME
 vtgamma \- set gamma correction on text terminals
 .SH SYNOPSIS
@@ -32,14 +32,14 @@ do so is to edit your
 .B ~/.bashrc
 and include the output of
 .BI "vtgamma -e " 1.6
-.RB "in " PS1 ", enclosed between " \e[ " and " \e] "."
+.RB "in " PS1 ", enclosed between " \(rs[ " and " \(rs] "."
 .RB "Unfortunately, the " "Midnight Commander" " can't cope well with prompts"
 containing such codes, thus you may want to prefer to set
 .B PROMPT_COMMAND
 instead:
 .br
 .HP
-.I PROMPT_COMMAND='echo -ne "\ee]P0000000..."'
+.I PROMPT_COMMAND='echo -ne \(dq\(rs\(rse]P0000000...\(dq'
 .HP 0
 This is only a notch slower (as
 .I echo

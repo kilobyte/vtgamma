@@ -1,0 +1,144 @@
+#!/usr/bin/perl -w
+use strict;
+use POSIX qw(wctomb);
+
+my ($c1,$c2);
+
+#This is an evil hack, but Perl's Unicode handling doesn't know how to fall
+#back to Linux block-drawing characters.  They're an unportable extension,
+#but hey -- all of pre-UTF8 crap is hardly ever portable.
+#We're supposed to use \e[11m only if TERM="linux", but in an otherwise lost
+#situation using it anyway can only help.
+$c1=$c2=pack 'xxxxxxxxxxxx';
+use locale;
+$c1="\e[11m\xb0\e[10m" if wctomb($c1, 0x2591)<=0;
+$c2="\e[11m\xdb\e[10m" if wctomb($c2, 0x2588)<=0;
+no locale;
+
+#If you use a character other than Ux2591, change $dots appropiately.  For
+#example, Ux2592 needs 0.5.
+my $dots=0.25;
+
+
+print <<END;
+Do not run this test if you're in the graphics mode, like an X terminal.
+Unless your font has a character with an uniform pattern of exactly 1/4 ratio
+of bright pixels (very unlikely).  Instead, use any of graphical tests --
+you'll get a lot more accurate results, and you're capable of viewing an
+image, aren't you?
+Same applies if your test character is distorted or non-uniform in any way;
+for example, this happens on LCD in non-native resolutions.
+
+===============================================================================
+
+Does the first pair of brackets contain a single character, a tightly dotted
+bar, and the second pair a solid bar?
+[$c1] [$c2] y/n
+END
+while(<>)
+{
+    goto VIS if /^y|yes$/i;
+    last if /^n|no$/i;
+}
+print <<END;
+To run this test, you'll need to temporarily use a font that has block-drawing
+characters.  On Linux console, you can do this with "consolechars -d".
+END
+exit;
+
+VIS:;
+
+sub irgb($$)
+{
+    my ($c,$bit)=@_;
+    return ($c&8?0x55:0) + ($c&$bit?0xaa:0);
+}
+
+sub end()
+{
+    for(0..15)
+    {
+        printf "\e]P%1X%02X%02X%02X",
+              $_,
+              irgb($_,1),
+              irgb($_,2),
+              irgb($_,4);
+    }
+    print "\e[2J";
+    exit;
+}
+
+$SIG{'INT'}=\&end;
+$SIG{'QUIT'}=\&end;
+
+
+sub gamma($$)
+{
+    my ($x,$k)=@_;
+    $x*=$dots;
+    return 0 if $x<=0;
+    return ($x==255)?255:0 if $k<=0;
+    return 255*exp(log($x/255)/$k);
+}
+
+sub drawtest($$$)
+{
+    #The reference color.
+    my ($r,$g,$b) = @_;
+    #Used colors -- 7 is normal text, 15 bright text, 14 the reference.
+    my @no7=(1..6,8..13);
+    #Color codes.
+    my @col=map {sprintf("\e[%u;3%um",$no7[$_]>>3&1,$no7[$_]&7)} 0..$#no7;
+    #Gamma values.
+    my @gs=map {($_+5)*0.2} 0..$#no7;
+
+    #Clear the screen -- any coloured existing content would look hideous.
+    print "\e[2J";
+    
+    print <<END;
+To measure the required gamma correction, squint and step away from the
+monitor.  The entry for which both halves appear to be of the same brightness
+is the one matching your display.
+
+The upper numbers are gamma values needed for the "correct" display, such as
+those of high-end monitors -- CRTs of this kind are usually sold with Macs.
+
+The bottom numbers are gamma values needed to match settings used by a vast
+majority of PC CRT monitors.
+
+
+END
+    
+    #Draw the numbers.
+    printf "%3.1f ", $gs[$_] for(0..$#no7);
+    print " correct gamma\n";
+    
+    #Use color 14 as full-bright white/red/green/blue, for reference.
+    printf "\e]PE%02X%02X%02X", $r, $g, $b;
+    for(0..$#no7)
+    {
+      my $l=$gs[$_];
+      #Set the palette entry...
+      printf "\e]P%X%02X%02X%02X", $no7[$_],
+          gamma($r,$l), gamma($g,$l), gamma($b,$l);
+      #and draw the bars.
+      print "\e[1;36m$c1$col[$_]$c2\e[0m  ";
+    }
+    print "\n";
+    printf "%3.1f ", $gs[$_]/1.6 for(0..$#no7);
+    print " typical PC CRT\n";
+}
+
+drawtest(255,255,255);
+print "\n\nPress \e[1mEnter\e[0m to test the red component, \e[1mq\e[0m to quit.\n";
+end if <>=~/^q|quit$/i;
+drawtest(255,0,0);
+print "\n\nPress \e[1mEnter\e[0m to test the green component, \e[1mq\e[0m to quit.\n";
+end if <>=~/^q|quit$/i;
+drawtest(0,255,0);
+print "\n\nPress \e[1mEnter\e[0m to test the blue component, \e[1mq\e[0m to quit.\n";
+end if <>=~/^q|quit$/i;
+drawtest(0,0,255);
+print "\n\nPress \e[1mEnter\e[0m to finish.\n";
+<>;
+end;

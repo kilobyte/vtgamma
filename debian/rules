@@ -1,0 +1,29 @@
+#!/usr/bin/make -f
+build:
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean 
+
+binary-indep:
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_install vtgamma /usr/bin
+	dh_install vtgammatest /usr/bin
+	dh_installman *.1
+	dh_compress
+	dh_fixperms
+	dh_perl
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch:
+
+binary: binary-indep
+
+.PHONY: build clean binary-indep binary-arch binary

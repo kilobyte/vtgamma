@@ -15,7 +15,7 @@ $c1="\e[11m\xb0\e[10m" if wctomb($c1, 0x2591)<=0;
 $c2="\e[11m\xdb\e[10m" if wctomb($c2, 0x2588)<=0;
 no locale;
 
-#If you use a character other than Ux2591, change $dots appropiately.  For
+#If you use a character other than Ux2591, change $dots appropriately.  For
 #example, Ux2592 needs 0.5.
 my $dots=0.25;
 

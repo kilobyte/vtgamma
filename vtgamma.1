@@ -10,7 +10,13 @@ vtgamma \- set gamma correction on text terminals
 .SH DESCRIPTION
 .B vtgamma
 allows you to set the gamma correction on Linux console.  It also works on
-certain terminal emulators as well.  This is usually useful on aged CRT
+certain terminal emulators as well.  A good deal of monitors tend to have
+too dark blue -- human eye is far less sensitive to blue light.  This is
+acceptable for photographic images that should look realistically, but
+can cause blue, especially dark blue, text to be hard to read.
+
+.B vtgamma
+is also useful on aged CRT
 monitors, which tend to rapidly lose the luminance-to-voltage ratio.  Even
 after just 2-3 years, typical CRT often needs gamma of as much as 1.6 to
 resemble a new one.  The author of this words has seen a specimen that

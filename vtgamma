@@ -49,13 +49,40 @@ sub irgb($$)
     return ($c&8?0x55:0) + ($c&$bit?0xaa:0);
 }
 
+sub rgb($)
+{
+    my ($c)=@_;
+
+    # basic 16 colors
+    return (irgb($c,1), irgb($c,2), irgb($c,4)) if $c < 16;
+
+    # 6x6x6 color cube
+    if ($c < 232)
+    {
+        $c -= 16;
+        use integer;
+        return ($c / 36 * 85 / 2, $c / 6 % 6 * 85 / 2, $c % 6 * 85 / 2);
+    }
+
+    # grayscale ramp
+    $c = $c*10-2312;
+    return ($c, $c, $c);
+}
+
+my $setcolor;
+if ($ENV{"TERM"} eq 'linux')
+{
+    $setcolor = sub { printf "%s]P%1X%02X%02X%02X", $esc, @_; };
+}
+else
+{
+    $setcolor = sub { printf "%s]4;%d;rgb:%02x/%02x/%02x%s", $esc, @_,
+        $esc eq '\e' ? '\e\\' : "\e\\"; }
+}
+
 for(0..15)
 {
-    printf "%s]P%1X%02X%02X%02X",
-          $esc,
-          $_,
-          gamma(irgb($_,1), $r),
-          gamma(irgb($_,2), $g),
-          gamma(irgb($_,4), $b);
+    my @rgb = rgb $_;
+    $setcolor->($_, gamma($rgb[0], $r), gamma($rgb[1], $g), gamma($rgb[2], $b));
 }
 print "\n" if $esc ne "\e";

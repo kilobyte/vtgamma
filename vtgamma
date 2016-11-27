@@ -77,6 +77,7 @@ sub rgb($)
 }
 
 my $setcolor;
+my $ncolors=15;
 if ($ENV{"TERM"} eq 'linux')
 {
     $setcolor = sub { printf "%s]P%1X%02X%02X%02X", $esc, @_; };
@@ -84,10 +85,11 @@ if ($ENV{"TERM"} eq 'linux')
 else
 {
     $setcolor = sub { printf "%s]4;%d;rgb:%02x/%02x/%02x%s", $esc, @_,
-        $esc eq '\e' ? '\e\\' : "\e\\"; }
+        $esc eq '\e' ? '\e\\' : "\e\\"; };
+    $ncolors=255;
 }
 
-for(0..15)
+for(0..$ncolors)
 {
     my @rgb = rgb $_;
     if ($lab)

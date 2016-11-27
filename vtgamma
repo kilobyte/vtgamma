@@ -2,11 +2,12 @@
 use strict;
 
 my $esc="\e";
+my $lab=0;
 my @args=[];
 
 my $USAGE=<<END;
 Usage:
-  vtgamma \e[2m[-e]\e[0m \e[1m<gamma>\e[0m
+  vtgamma \e[2m[-e] [-l]\e[0m \e[1m<gamma>\e[0m
   vtgamma \e[2m[-e]\e[0m \e[31;1m<\e[0;31mred gamma\e[1m>\e[0m \e[32;1m<\e[0;32mgreen gamma\e[1m>\e[0m \e[1;34m<\e[0;34mblue gamma\e[1m>\e[0m
 END
 $USAGE=~s/\e\[[0-9;]*m//g unless -t STDERR;
@@ -17,6 +18,11 @@ while(@ARGV)
     if (/^-e|--escape$/)
     {
         $esc='\e';
+    }
+    elsif (/^-l|--lab|--Lab|--lchab|--LCHab$/)
+    {
+        $lab=1;
+        require Graphics::ColorObject;
     }
     elsif (/^(\d*\.?\d+)$/)
     {
@@ -32,15 +38,16 @@ my ($r,$g,$b)=
     ($#args==0)? die "$USAGE":
     ($#args==1)? ($args[1],$args[1],$args[1]):
     ($#args==2)? die "Only 2 gammas given, 1 or 3 required.\n":
-    ($#args==3)? ($args[1],$args[2],$args[3]):
+    ($#args==3)? $lab ? die "Can't give RGB gamma in LCHab mode.\n":
+                        ($args[1],$args[2],$args[3]):
     die "Too many gammas given.\n$USAGE";
 
 sub gamma($$)
 {
     my ($x,$k)=@_;
     return 0 if $x<=0;
-    return ($x==255)?255:0 if $k<=0;
-    return 255*exp(log($x/255)/$k);
+    return ($x>=1)?1:0 if $k<=0;
+    return exp(log($x)/$k);
 }
 
 sub irgb($$)
@@ -83,6 +90,19 @@ else
 for(0..15)
 {
     my @rgb = rgb $_;
-    $setcolor->($_, gamma($rgb[0], $r), gamma($rgb[1], $g), gamma($rgb[2], $b));
+    if ($lab)
+    {
+        my $c=Graphics::ColorObject->new_RGB255(\@rgb);
+        my @lab=@{$c->as_LCHab()};
+        $lab[0]=100*gamma($lab[0]/100, $r);
+        @rgb=@{Graphics::ColorObject->new_LCHab(\@lab)->as_RGB255()};
+    }
+    else
+    {
+        $rgb[0]=255*gamma $rgb[0]/255, $r;
+        $rgb[1]=255*gamma $rgb[1]/255, $g;
+        $rgb[2]=255*gamma $rgb[2]/255, $b;
+    }
+    $setcolor->($_, @rgb);
 }
 print "\n" if $esc ne "\e";

@@ -3,7 +3,7 @@
 vtgamma \- set gamma correction on text terminals
 .SH SYNOPSIS
 .B vtgamma
-.RI [ -e ] " <gamma>"
+.RI [ -e ] " " [ -l ] " <gamma>"
 .br
 .B vtgamma
 .RI [ -e ] " <red gamma> <green gamma> <blue gamma>"
@@ -56,6 +56,10 @@ is a bash builtin), and it obviously beats running vtgamma every single time.
 Escapes the codes in a form suitable for
 .BR "echo -e" ","
 C/Perl/... literals, etc.
+.TP
+.BR -l | --lab | --Lab | --lchab | --LCHab
+Uses the LCHab color space (a variant of Lab) instead of RGB, this allows
+brightening colors above FF0000.
 .SH "SEE ALSO"
 .IR vtgammatest ( 1 "), " xgamma ( 1 ).
 .SH AUTHOR

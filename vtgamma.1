@@ -33,23 +33,22 @@ the default.
 
 The color profile lasts either until the next time a program resets the terminal.
 While this is quite a rare thing, it happens, and thus you'll probably want to
-have the gamma refreshed every time a program exits.  The most effective way to
-do so is to edit your
+have the gamma refreshed every time a program exits.  The recommended way is
+to include \fBvtgamma\fR in \fBPROMPT_COMMAND\fR:
+.br
+.HP
+.I PROMPT_COMMAND='vtgamma 1.6'
+.HP 0
+although if you don't want to spawn a process every prompt, you may instead
+edit
 .B ~/.bashrc
 and include the output of
 .BI "vtgamma -e " 1.6
 .RB "in " PS1 ", enclosed between " \(rs[ " and " \(rs] "."
-.RB "Unfortunately, the " "Midnight Commander" " can't cope well with prompts"
-containing such codes, thus you may want to prefer to set
-.B PROMPT_COMMAND
-instead:
-.br
-.HP
-.I PROMPT_COMMAND='echo -ne \(dq\(rs\(rse]P0000000...\(dq'
-.HP 0
-This is only a notch slower (as
-.I echo
-is a bash builtin), and it obviously beats running vtgamma every single time.
+Unfortunately, this won't work when you switch between terminals using
+different ways of setting gamma (currently Linux console vs most graphical
+terminals); \fBMidnight Commander\fR can't cope well with prompts
+containing such codes either.
 .SH OPTIONS
 .TP
 .BR -e | --escape

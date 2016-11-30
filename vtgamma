@@ -82,6 +82,11 @@ if ($ENV{"TERM"} eq 'linux')
 {
     $setcolor = sub { printf "%s]P%1X%02X%02X%02X", $esc, @_; };
 }
+elsif ($ENV{"TERM"} eq 'hurd')
+{
+    # Neither supports nor cleanly ignores.
+    die "Hurd console doesn't support palette control, sorry.\n";
+}
 else
 {
     $setcolor = sub { printf "%s]4;%d;rgb:%02x/%02x/%02x%s", $esc, @_,

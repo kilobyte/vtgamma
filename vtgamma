@@ -78,11 +78,11 @@ sub rgb($)
 
 my $setcolor;
 my $ncolors=15;
-if ($ENV{"TERM"} eq 'linux')
+if ($ENV{"TERM"}=~/^linux/)
 {
     $setcolor = sub { printf "%s]P%1X%02X%02X%02X", $esc, @_; };
 }
-elsif ($ENV{"TERM"} eq 'hurd')
+elsif ($ENV{"TERM"}=~/^hurd/)
 {
     # Neither supports nor cleanly ignores.
     die "Hurd console doesn't support palette control, sorry.\n";

@@ -3,19 +3,25 @@
 vtgamma \- set gamma correction on text terminals
 .SH SYNOPSIS
 .B vtgamma
-.RI [ -x ] " <gamma>"
+.RI [ -e ] " " [ -l ] " <gamma>"
 .br
 .B vtgamma
-.RI [ -x ] " <red gamma> <green gamma> <blue gamma>"
+.RI [ -e ] " <red gamma> <green gamma> <blue gamma>"
 .SH DESCRIPTION
 .B vtgamma
 allows you to set the gamma correction on Linux console.  It also works on
-certain terminal emulators as well.  This is usually useful on aged CRT
+most terminal emulators as well.  A good deal of monitors tend to have
+too dark blue -- human eye is far less sensitive to blue light.  This is
+acceptable for photographic images that should look realistically, but
+can cause blue, especially dark blue, text to be hard to read.
+
+.B vtgamma
+is also useful on aged CRT
 monitors, which tend to rapidly lose the luminance-to-voltage ratio.  Even
 after just 2-3 years, typical CRT often needs gamma of as much as 1.6 to
 resemble a new one.  The author of this words has seen a specimen that
 needed gamma of 2 2 6 (ie, with a big loss of blue) despite still having
-razor-sharp display.
+sharp display.
 
 Gamma correction is given as a positive floating-point number, with 1.0 being
 the default.
@@ -27,31 +33,36 @@ the default.
 
 The color profile lasts either until the next time a program resets the terminal.
 While this is quite a rare thing, it happens, and thus you'll probably want to
-have the gamma refreshed every time a program exits.  The most effective way to
-do so is to edit your
+have the gamma refreshed every time a program exits.  The recommended way is
+to include \fBvtgamma\fR in \fBPROMPT_COMMAND\fR:
+.br
+.HP
+.I PROMPT_COMMAND='vtgamma 1.6'
+.HP 0
+although if you don't want to spawn a process every prompt, you may instead
+edit
 .B ~/.bashrc
 and include the output of
 .BI "vtgamma -e " 1.6
 .RB "in " PS1 ", enclosed between " \(rs[ " and " \(rs] "."
-.RB "Unfortunately, the " "Midnight Commander" " can't cope well with prompts"
-containing such codes, thus you may want to prefer to set
-.B PROMPT_COMMAND
-instead:
-.br
-.HP
-.I PROMPT_COMMAND='echo -ne \(dq\(rs\(rse]P0000000...\(dq'
-.HP 0
-This is only a notch slower (as
-.I echo
-is a bash builtin), and it obviously beats running vtgamma every single time.
+Unfortunately, this won't work when you switch between terminals using
+different ways of setting gamma (currently Linux console vs most graphical
+terminals); \fBMidnight Commander\fR can't cope well with prompts
+containing such codes either.
 .SH OPTIONS
 .TP
 .BR -e | --escape
 Escapes the codes in a form suitable for
 .BR "echo -e" ","
-C/Perl/... literals, etc.
+C/Perl/... literals, etc.  You might want to include this in
+\fB/etc/issue\fR.
+.TP
+.BR -l | --lab | --Lab | --lchab | --LCHab
+Uses the LCHab color space (a variant of Lab) instead of RGB, this allows
+brightening colors above FF0000.  Requires the \fIGraphics::ColorObject\fR
+library (on Debian, install \fIlibgraphics-colorobject-perl\fR).
 .SH "SEE ALSO"
-.IR vtgammatest ( 1 "), " xgamma ( 1 ).
+.IR xgamma ( 1 )
 .SH AUTHOR
 Both the program and this man page are the fault of Adam Borowski.  Both of
 them are in the Public Domain, or the closest approximation allowed by law.

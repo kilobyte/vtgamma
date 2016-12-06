@@ -1,6 +1,12 @@
+vtgamma (0.2-1) unstable; urgency=medium
+
+  * New upstream release
+  * Upload to Debian (Closes: #377939)
+
+ -- Adam Borowski <kilobyte@angband.pl>  Tue, 06 Dec 2016 04:53:15 +0100
+
 vtgamma (0.1-1) unstable; urgency=low
 
-  * Initial release (Closes: #377939)
+  * Initial release
 
  -- Adam Borowski <kilobyte@angband.pl>  Wed, 12 Jul 2006 02:54:30 +0200
-

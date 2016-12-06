@@ -2,19 +2,14 @@ Source: vtgamma
 Section: utils
 Priority: optional
 Maintainer: Adam Borowski <kilobyte@angband.pl>
-Build-Depends: debhelper (>= 4)
-Standards-Version: 3.7.2
+Build-Depends: debhelper (>= 10)
+Standards-Version: 3.9.8
 
 Package: vtgamma
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: gamma correction for Linux console
- This tool can apply gamma correction to Linux virtual terminals (and
- possibly others).  The correction can use either a single gamma value,
+Recommends: libgraphics-colorobject-perl
+Description: gamma correction for terminals
+ This tool can apply gamma correction to Linux virtual terminals and many
+ graphical terminals.  The correction can use either a single gamma value,
  or separate ones for each color component (R/G/B).
- .
- As CRT monitors rapidly lose low-to-mid-range luminance with age, gamma
- correction can significantly improve the usefulness of old ones.  At the
- very least, light gray is easier to read than dark yellow.
- .
- Of course, no one stops you from adjusting your LCD as well, though.

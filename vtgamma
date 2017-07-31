@@ -61,6 +61,7 @@ sub rgb($)
     my ($c)=@_;
 
     # basic 16 colors
+    return (0xaa, 0x55, 0x00) if $c == 3; # Real CGA/VGA brown.
     return (irgb($c,1), irgb($c,2), irgb($c,4)) if $c < 16;
 
     # 6x6x6 color cube

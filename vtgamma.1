@@ -3,10 +3,10 @@
 vtgamma \- set gamma correction on text terminals
 .SH SYNOPSIS
 .B vtgamma
-.RI [ -e ] " " [ -l ] " <gamma>"
+.RI [ -e ] " " [ -r ] " " [ -l ] " <gamma>"
 .br
 .B vtgamma
-.RI [ -e ] " <red gamma> <green gamma> <blue gamma>"
+.RI [ -e ] " " [ -r ] " <red gamma> <green gamma> <blue gamma>"
 .SH DESCRIPTION
 .B vtgamma
 allows you to set the gamma correction on Linux console.  It also works on
@@ -56,6 +56,12 @@ Escapes the codes in a form suitable for
 .BR "echo -e" ","
 C/Perl/... literals, etc.  You might want to include this in
 \fB/etc/issue\fR.
+.TP
+.BR -r | --reverse
+Black on white mode.  Note that this does what you'd expect only on certain
+terminals, such as Linux console.  On most graphical terminal emulators this
+affects only "real" black and white but not primary text and background
+colors.
 .TP
 .BR -l | --lab | --Lab | --lchab | --LCHab
 Uses the LCHab color space (a variant of Lab) instead of RGB, this allows

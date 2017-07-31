@@ -4,11 +4,12 @@ use strict;
 my $esc="\e";
 my $lab=0;
 my @args=[];
+my $rv=0;
 
 my $USAGE=<<END;
 Usage:
-  vtgamma \e[30;1m[-e] [-l]\e[0m \e[1m<gamma>\e[0m
-  vtgamma \e[30;1m[-e]\e[0m \e[31;1m<\e[0;31mred gamma\e[1m>\e[0m \e[32;1m<\e[0;32mgreen gamma\e[1m>\e[0m \e[1;34m<\e[0;34mblue gamma\e[1m>\e[0m
+  vtgamma \e[30;1m[-e] [-r] [-l]\e[0m \e[1m<gamma>\e[0m
+  vtgamma \e[30;1m[-e] [-r]\e[0m \e[31;1m<\e[0;31mred gamma\e[1m>\e[0m \e[32;1m<\e[0;32mgreen gamma\e[1m>\e[0m \e[1;34m<\e[0;34mblue gamma\e[1m>\e[0m
 END
 $USAGE=~s/\e\[[0-9;]*m//g unless -t STDERR;
 
@@ -23,6 +24,10 @@ while(@ARGV)
     {
         $lab=1;
         require Graphics::ColorObject;
+    }
+    elsif (/^-r|--reverse$/)
+    {
+        $rv=1;
     }
     elsif (/^(\d*\.?\d+)$/)
     {
@@ -56,9 +61,13 @@ sub irgb($$)
     return ($c&8?0x55:0) + ($c&$bit?0xaa:0);
 }
 
+my %reverse=(0=>15, 15=>0, 7=>8, 8=>7);
+
 sub rgb($)
 {
     my ($c)=@_;
+
+    $c=$reverse{$c} if $rv && exists $reverse{$c};
 
     # basic 16 colors
     return (0xaa, 0x55, 0x00) if $c == 3; # Real CGA/VGA brown.

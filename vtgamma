@@ -79,7 +79,8 @@ sub rgb($)
     {
         $c -= 16;
         use integer;
-        return ($c / 36 * 85 / 2, $c / 6 % 6 * 85 / 2, $c % 6 * 85 / 2);
+        my ($r,$g,$b) = ($c / 36, $c / 6 % 6, $c % 6);
+        return ($r ? $r*0x28+0x37:0, $g ? $g*0x28+0x37:0, $b ? $b*0x28+0x37:0);
     }
 
     # grayscale ramp

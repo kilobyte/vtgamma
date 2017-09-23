@@ -3,7 +3,7 @@ Upstream-Name: vtgamma
 Source: https://github.com/kilobyte/vtgamma
 
 Files: *
-Copyright: 1999-2016 Adam Borowski <kilobyte@angband.pl>
+Copyright: 1999-2017 Adam Borowski <kilobyte@angband.pl>
 License: PD
  I hereby disclaim all copyright on this software and the packaging, and
  put it in the Public Domain.  If this is impossible in a given jurisdiction,

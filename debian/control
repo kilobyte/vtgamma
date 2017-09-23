@@ -3,7 +3,7 @@ Section: utils
 Priority: optional
 Maintainer: Adam Borowski <kilobyte@angband.pl>
 Build-Depends: debhelper (>= 10)
-Standards-Version: 3.9.8
+Standards-Version: 4.1.0
 
 Package: vtgamma
 Architecture: all

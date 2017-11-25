@@ -5,6 +5,7 @@ my $esc="\e";
 my $lab=0;
 my @args=[];
 my $rv=0;
+my $perm=0;
 
 my $USAGE=<<END;
 Usage:
@@ -12,6 +13,8 @@ Usage:
   vtgamma \e[30;1m[-e] [-r]\e[0m \e[31;1m<\e[0;31mred gamma\e[1m>\e[0m \e[32;1m<\e[0;32mgreen gamma\e[1m>\e[0m \e[1;34m<\e[0;34mblue gamma\e[1m>\e[0m
 END
 $USAGE=~s/\e\[[0-9;]*m//g unless -t STDERR;
+
+my $PIO_CMAP=0x4B71; # Linux
 
 while(@ARGV)
 {
@@ -32,6 +35,11 @@ while(@ARGV)
     elsif (/^(\d*\.?\d+)$/)
     {
         push @args, $1;
+    }
+    elsif (/^-p|--permanent$/)
+    {
+        $^O eq "linux" or die "PIO_CMAP supported only on Linux.\n";
+        $perm=1;
     }
     else
     {
@@ -90,7 +98,12 @@ sub rgb($)
 
 my $setcolor;
 my $ncolors=15;
-if ($ENV{"TERM"}=~/^linux/)
+my $out="";
+if ($perm)
+{
+    $setcolor = sub { shift; $out .= sprintf("%c%c%c", @_); };
+}
+elsif ($ENV{"TERM"}=~/^linux/)
 {
     $setcolor = sub { printf "%s]P%1X%02X%02X%02X", $esc, @_; };
 }
@@ -124,4 +137,13 @@ for(0..$ncolors)
     }
     $setcolor->($_, @rgb);
 }
-print "\n" if $esc ne "\e";
+
+if ($perm)
+{
+    ioctl(STDOUT,$PIO_CMAP,$out)
+        or die "$0: PIO_CMAP failed: $^E\n";
+}
+else
+{
+    print "\n" if $esc ne "\e";
+}

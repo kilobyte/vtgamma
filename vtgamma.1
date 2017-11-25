@@ -29,9 +29,10 @@ the default.
 .RB "To affect the login prompt, it's best to: " "vtgamma"
 .I 1.6
 .BR ">>/etc/issue" ", where "
-.IR 1.6 " is the gamma correction you want."
+.IR 1.6 " is the gamma correction you want (but see \fB-p\fR)."
 
-The color profile lasts either until the next time a program resets the terminal.
+Without \fB-p\fR, the
+color profile lasts either until the next time a program resets the terminal.
 While this is quite a rare thing, it happens, and thus you'll probably want to
 have the gamma refreshed every time a program exits.  The recommended way is
 to include \fBvtgamma\fR in \fBPROMPT_COMMAND\fR:
@@ -56,6 +57,11 @@ Escapes the codes in a form suitable for
 .BR "echo -e" ","
 C/Perl/... literals, etc.  You might want to include this in
 \fB/etc/issue\fR.
+.TP
+.BR -p | --permanent
+On Linux console (VT) only, sets the palette in a way that's permanent until
+reboot.  This uses an ioctl rather than terminal codes, thus can't be
+captured and written as a string.
 .TP
 .BR -r | --reverse
 Black on white mode.  Note that this does what you'd expect only on certain

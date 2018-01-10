@@ -10,6 +10,7 @@ Package: vtgamma
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgraphics-colorobject-perl
+Multi-Arch: foreign
 Description: gamma correction for terminals
  This tool can apply gamma correction to Linux virtual terminals and many
  graphical terminals.  The correction can use either a single gamma value,

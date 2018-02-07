@@ -1,3 +1,11 @@
+vtgamma (0.4-2) unstable; urgency=medium
+
+  * Let the watch file ignore Debian-specific tags.
+  * Multi-Arch: foreign.
+  * dh 11.
+
+ -- Adam Borowski <kilobyte@angband.pl>  Thu, 08 Feb 2018 00:13:13 +0100
+
 vtgamma (0.4-1) unstable; urgency=medium
 
   * New upstream release

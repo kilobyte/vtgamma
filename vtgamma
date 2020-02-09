@@ -6,15 +6,36 @@ my $lab=0;
 my @args=[];
 my $rv=0;
 my $perm=0;
+my $scheme;
 
 my $USAGE=<<END;
 Usage:
+  vtgamma \e[30;1m[-e] [-r]\e[0m \e[1m<palette>\e[0m [<gamma>...]
   vtgamma \e[30;1m[-e] [-r] [-l]\e[0m \e[1m<gamma>\e[0m
   vtgamma \e[30;1m[-e] [-r]\e[0m \e[31;1m<\e[0;31mred gamma\e[1m>\e[0m \e[32;1m<\e[0;32mgreen gamma\e[1m>\e[0m \e[1;34m<\e[0;34mblue gamma\e[1m>\e[0m
 END
 $USAGE=~s/\e\[[0-9;]*m//g unless -t STDERR;
 
 my $PIO_CMAP=0x4B71; # Linux
+
+my %palette =
+(
+    "vga"=>
+        [0x000000, 0xaa0000, 0x00aa00, 0xaa5500, 0x0000aa, 0xaa00aa, 0x00aaaa, 0xaaaaaa,
+         0x555555, 0xff5555, 0x55ff55, 0xeedd00, 0x5555ff, 0xff55ff, 0x55ffff, 0xffffff],
+    "ubuntu"=>
+        [0x010101, 0xde382b, 0x39b54a, 0xffc706, 0x006fb8, 0x762671, 0x2cb5e9, 0xcccccc,
+         0x808080, 0xff0000, 0x00ff00, 0xffff00, 0x0000ff, 0xff00ff, 0x00ffff, 0xffffff],
+    "gruvbox"=>
+        [0x282828, 0xcc241d, 0x98971a, 0xd79921, 0x458588, 0xb16286, 0x689d6a, 0xa89984,
+         0x928374, 0xfb4934, 0xb8bb26, 0xfabd2f, 0x83a598, 0xd3869b, 0x8ec07c, 0xebdbb2],
+    "gruvbox-light"=>
+        [0xfbf1c7, 0xcc241d, 0x98971a, 0xd79921, 0x458588, 0xb16286, 0x689d6a, 0x7c6f64,
+         0x928374, 0x9d0006, 0x79740e, 0xb57614, 0x076678, 0x8f3f71, 0x427b58, 0x3c3836],
+    "monokai"=>
+        [0x272822, 0xf92672, 0xa6e22e, 0xf4bf75, 0x66d9ef, 0xae81ff, 0xa1efe4, 0xf8f8f2,
+         0x75715e, 0xf92672, 0xa6e22e, 0xf4bf75, 0x66d9ef, 0xae81ff, 0xa1efe4, 0xf9f8f5],
+);
 
 while(@ARGV)
 {
@@ -36,6 +57,10 @@ while(@ARGV)
     {
         push @args, $1;
     }
+    elsif (/^[^-]/)
+    {
+        $scheme=$_;
+    }
     elsif (/^-p|--permanent$/)
     {
         $^O eq "linux" or die "PIO_CMAP supported only on Linux.\n";
@@ -48,12 +73,23 @@ while(@ARGV)
 }
 
 my ($r,$g,$b)=
-    ($#args==0)? die "$USAGE":
+    ($#args==0)? $scheme ? (1,1,1) : die "$USAGE":
     ($#args==1)? ($args[1],$args[1],$args[1]):
     ($#args==2)? die "Only 2 gammas given, 1 or 3 required.\n":
     ($#args==3)? $lab ? die "Can't give RGB gamma in LCHab mode.\n":
                         ($args[1],$args[2],$args[3]):
     die "Too many gammas given.\n$USAGE";
+
+my $pal;
+$scheme//="vga";
+if ($rv && $palette{"$scheme-light"})
+{
+    $pal=$palette{$scheme.="-light"};
+}
+elsif (!($pal=$palette{$scheme}))
+{
+    die "Unknown palette: ｢$scheme｣\n";
+}
 
 sub gamma($$)
 {
@@ -63,13 +99,13 @@ sub gamma($$)
     return exp(log($x)/$k);
 }
 
-sub irgb($$)
-{
-    my ($c,$bit)=@_;
-    return ($c&8?0x55:0) + ($c&$bit?0xaa:0);
-}
-
 my %reverse=(0=>15, 15=>0, 7=>8, 8=>7);
+
+sub unp($)
+{
+    my $c=$_[0];
+    return ($c>>16, $c>>8 & 0xff, $c & 0xff);
+}
 
 sub rgb($)
 {
@@ -78,9 +114,7 @@ sub rgb($)
     $c=$reverse{$c} if $rv && exists $reverse{$c};
 
     # basic 16 colors
-    return (0xaa, 0x55, 0x00) if $c == 3; # Real CGA/VGA brown.
-    return (0xee, 0xdd, 0x00) if $c == 11; # Less white yellow, especially when reversed.
-    return (irgb($c,1), irgb($c,2), irgb($c,4)) if $c < 16;
+    return unp($$pal[$c]) if $pal && $c < 16;
 
     # 6x6x6 color cube
     if ($c < 232)

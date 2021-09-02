@@ -2,6 +2,8 @@ vtgamma (0.4-3) UNRELEASED; urgency=medium
 
   * Bump debhelper from old 10 to 13.
   * Set debhelper-compat version in Build-Depends.
+  * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
+    Repository-Browse.
 
  -- Debian Janitor <janitor@jelmer.uk>  Thu, 02 Sep 2021 00:09:31 -0000
 

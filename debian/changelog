@@ -1,11 +1,15 @@
-vtgamma (0.4-3) UNRELEASED; urgency=medium
+vtgamma (0.4-3) unstable; urgency=medium
 
+  [ Debian Janitor ]
   * Bump debhelper from old 10 to 13.
   * Set debhelper-compat version in Build-Depends.
   * Set upstream metadata fields: Bug-Database, Bug-Submit, Repository,
     Repository-Browse.
 
- -- Debian Janitor <janitor@jelmer.uk>  Thu, 02 Sep 2021 00:09:31 -0000
+  [ Adam Borowski ]
+  * Fix the watch file.
+
+ -- Adam Borowski <kilobyte@angband.pl>  Tue, 14 Sep 2021 19:13:10 +0200
 
 vtgamma (0.4-2) unstable; urgency=medium
 

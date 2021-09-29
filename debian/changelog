@@ -1,3 +1,9 @@
+vtgamma (0.4-4) unstable; urgency=medium
+
+  * Fix the watch file, try 2.
+
+ -- Adam Borowski <kilobyte@angband.pl>  Wed, 29 Sep 2021 20:41:02 +0200
+
 vtgamma (0.4-3) unstable; urgency=medium
 
   [ Debian Janitor ]

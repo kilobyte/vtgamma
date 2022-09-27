@@ -3,11 +3,11 @@ Section: utils
 Priority: optional
 Maintainer: Adam Borowski <kilobyte@angband.pl>
 Build-Depends: debhelper-compat (= 13)
-Standards-Version: 4.6.0
+Standards-Version: 4.6.1
 Rules-Requires-Root: no
 Homepage: https://github.com/kilobyte/vtgamma
 Vcs-Browser: https://github.com/kilobyte/vtgamma/tree/debian
-Vcs-Git: https://github.com/kilobyte/vtgamma -b debian
+Vcs-Git: https://github.com/kilobyte/vtgamma.git -b debian
 
 Package: vtgamma
 Architecture: all

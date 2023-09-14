@@ -1,3 +1,11 @@
+vtgamma (0.5-1) unstable; urgency=medium
+
+  * New upstream release, including gruvbox support in honor of Abraham
+    Raji.
+  * Update the watch file wrt Github changes.
+
+ -- Adam Borowski <kilobyte@angband.pl>  Thu, 14 Sep 2023 18:11:43 +0200
+
 vtgamma (0.4-4) unstable; urgency=medium
 
   * Fix the watch file, try 2.

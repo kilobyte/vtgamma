@@ -80,11 +80,14 @@ my ($r,$g,$b)=
                         ($args[1],$args[2],$args[3]):
     die "Too many gammas given.\n$USAGE";
 
+my %reverse=(0=>15, 15=>0, 7=>8, 8=>7);
+
 my $pal;
 $scheme//="vga";
 if ($rv && $palette{"$scheme-light"})
 {
     $pal=$palette{$scheme.="-light"};
+    %reverse=();
 }
 elsif (!($pal=$palette{$scheme}))
 {
@@ -98,8 +101,6 @@ sub gamma($$)
     return ($x>=1)?1:0 if $k<=0;
     return exp(log($x)/$k);
 }
-
-my %reverse=(0=>15, 15=>0, 7=>8, 8=>7);
 
 sub unp($)
 {

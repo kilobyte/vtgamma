@@ -7,6 +7,9 @@ vtgamma \- set gamma correction on text terminals
 .br
 .B vtgamma
 .RI [ -e ] " " [ -r ] " <red gamma> <green gamma> <blue gamma>"
+.br
+.B vtgamma
+.RI [ -e ] " " [ -r ] "<palette>" [ "<gamma>..." ]
 .SH DESCRIPTION
 .B vtgamma
 allows you to set the gamma correction on Linux console.  It also works on
@@ -26,6 +29,21 @@ sharp display.
 Gamma correction is given as a positive floating-point number, with 1.0 being
 the default.
 
+You may also select a different palette than default "\fBvga\fR".  A palette
+may then have a gamma correction applied to it -- all options are allowed.
+
+.TP
+This version recognizes the following palettes:
+
+vga
+.br
+gruvbox
+.br
+monokai
+.br
+ubuntu
+
+.RE
 .RB "To affect the login prompt, it's best to: " "vtgamma"
 .I 1.6
 .BR ">>/etc/issue" ", where "
